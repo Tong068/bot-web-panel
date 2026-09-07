@@ -1,0 +1,15 @@
+{
+  "name": "bot-web-panel",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "build": "npm --prefix web run build",
+    "typecheck": "npm --prefix web run typecheck",
+    "watch": "npm --prefix web run watch",
+    "password": "node scripts/password.mjs"
+  },
+  "peerDependencies": { "express": "^4.19.2", "sqlite3": "^5.1.7", "yaml": "^2.5.0", "file-type": "^19.4.1" }
+}

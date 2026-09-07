@@ -1,0 +1,10 @@
+{
+  "name": "bot-web-panel-ui",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "AGPL-3.0-only",
+  "scripts": { "build": "vue-tsc --noEmit && vite build", "typecheck": "vue-tsc --noEmit", "watch": "vite build --watch" },
+  "dependencies": { "vue": "^3.5.13", "pinia": "^3.0.3", "@fortawesome/fontawesome-svg-core": "^6.7.2", "@fortawesome/free-solid-svg-icons": "^6.7.2", "@fortawesome/vue-fontawesome": "^3.0.8" },
+  "devDependencies": { "typescript": "^5.7.3", "vite": "^6.3.5", "@vitejs/plugin-vue": "^5.2.3", "vue-tsc": "^2.2.10", "@types/node": "^22.15.0" }
+}

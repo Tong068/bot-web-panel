@@ -1,0 +1,9 @@
+enabled: true
+retentionDays: 7
+uploadMaxMB: 20
+mediaCacheMB: 512
+sessionHours: 24
+# Explicit origins for HTTPS reverse proxies, for example https://chat.example.com.
+allowedOrigins: []
+# Exact hosts of trusted adapter media servers, including port if non-default.
+mediaHosts: []
