@@ -51,7 +51,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { usePanel } from './state/panel'
 import FriendBody from './components/FriendBody.vue'
 import Chat from './pages/Chat.vue'
@@ -85,5 +85,18 @@ async function conversationAction(id: string) {
 async function run(fn: () => unknown) { try { await fn() } catch (e) { panel.error = (e as Error).message } }
 function setView(value: string) { view.value = value; search.value = ''; if (innerWidth < 720) delete panel.selected[panel.activeBot] }
 async function submitLogin() { busy.value = true; loginError.value = ''; try { await panel.login(username.value, password.value); password.value = '' } catch (e) { loginError.value = (e as Error).message } finally { busy.value = false } }
-onMounted(panel.init)
+async function initializeLogin(quickOnly = false) {
+  const hash = new URLSearchParams(location.hash.slice(1))
+  const code = hash.has('login') ? hash.get('login')! : undefined
+  if (quickOnly && code === undefined) return
+  if (code !== undefined) {
+    hash.delete('login')
+    history.replaceState(history.state, '', `${location.pathname}${location.search}${hash.size ? `#${hash}` : ''}`)
+  }
+  loginError.value = ''
+  try { await panel.init(code) } catch (e) { loginError.value = (e as Error).message }
+}
+const onLoginHashChange = () => { void initializeLogin(true) }
+onMounted(() => { window.addEventListener('hashchange', onLoginHashChange); void initializeLogin() })
+onUnmounted(() => window.removeEventListener('hashchange', onLoginHashChange))
 </script>

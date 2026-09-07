@@ -36,9 +36,10 @@ export const usePanel = defineStore('panel', () => {
     return result.data
   }
   async function login(username: string, password: string) { const session = await request<{ csrf: string }>('login', { username, password }); csrf.value = session.csrf; authenticated.value = true; await ready() }
-  async function init() {
-    try { const session = await request<{ csrf: string }>('session'); csrf.value = session.csrf; authenticated.value = true; await ready() }
-    catch (e) { if (authenticated.value) error.value = (e as Error).message }
+  async function init(quickCode?: string) {
+    starting.value = true
+    try { const session = await request<{ csrf: string }>(quickCode === undefined ? 'session' : 'login/quick', quickCode === undefined ? undefined : { code: quickCode }); csrf.value = session.csrf; authenticated.value = true; await ready() }
+    catch (e) { if (authenticated.value) error.value = (e as Error).message; else if (quickCode !== undefined) throw e }
     finally { starting.value = false }
   }
   async function ready() { settings.value = await request('settings'); await refreshBots(); if (activeBot.value) await switchBot(activeBot.value); stream() }

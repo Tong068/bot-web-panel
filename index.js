@@ -1,7 +1,8 @@
 import { createPanel } from './lib/server.js'
+import { PanelCommand, stateKey } from './lib/commands.js'
 
-const stateKey = Symbol.for('yunzai.bot-web-panel')
 if (globalThis[stateKey]) await globalThis[stateKey].close()
+delete globalThis[stateKey]
 try {
   globalThis[stateKey] = await createPanel(Bot)
   const port = Bot.server?.address?.()?.port
@@ -10,8 +11,4 @@ try {
   logger.error(`[BotWeb] 加载失败：${error.message}`)
 }
 
-class PanelCommand extends plugin {
-  constructor() { super({ name: '多机器人消息面板', event: 'message', rule: [{ reg: '^#消息面板$', fnc: 'address', permission: 'master' }] }) }
-  async address() { return this.reply(`消息面板路径：/bot-web/\n使用框架现有端口。初始管理员密码见启动日志或插件 data/initial-password.txt。`) }
-}
 export const apps = { PanelCommand }

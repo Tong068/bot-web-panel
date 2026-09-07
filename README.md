@@ -16,6 +16,12 @@ git clone https://github.com/Tong068/bot-web-panel.git plugins/bot-web-panel
 
 插件已包含构建后的 `web/dist`。重启框架后访问 `http://localhost:2536/bot-web/`，端口以框架配置为准。主人也可以发送 `#消息面板` 查看入口说明。
 
+主人发送 `#面板登录` 或 `#消息面板登录` 可获取免密码登录链接（兼容“登陆”和省略 `#`）。登录消息采用合并转发，分别展示自定义地址、内网地址、外网地址和 IPv6 地址；没有地址的类别会显示未配置或未获取到。群聊触发时，合并转发只通过当前机器人私信发送；私信失败时请添加机器人好友后私聊重试。所有地址共用一个临时令牌，3 分钟内有效且只能使用一次，打开后建立与密码登录相同的管理员会话，默认有效期为 24 小时。修改或重置密码会使已有会话和未使用的登录链接失效。
+
+自定义地址来自 `publicUrl` 和 `allowedOrigins`，自动地址使用框架实际监听端口，包含本机入口、网卡 IPv4、可用 IPv6 及公网 IP 查询结果。公网 IPv4 优先使用锅巴同源的 zxinc HTTPS 查询，失败时尝试 ipify；IPv6 使用 ipify，失败时尝试 ipw.cn。单次请求超时 3 秒，成功缓存 10 分钟，失败缓存 1 分钟，查询失败不影响其他地址。IPv6 使用方括号拼接端口，过滤不可直接在浏览器中使用的链路本地地址；只监听 IPv4 或回环接口时不会生成未监听的 IPv6 链接。
+
+使用域名、反向代理或公网映射时，可在 `config/config.yaml` 设置 `publicUrl: 'https://chat.example.com/bot-web/'`，也可填写 URL 数组。自定义地址与其他类别同时展示。外网地址需要防火墙放行及必要的端口映射；外部端口与监听端口不同应填写自定义地址。HTTPS 反代仍需把 `https://chat.example.com` 加入 `allowedOrigins`。
+
 管理员账号为 `admin`。首次生成的随机密码显示在启动日志，并保存在插件目录的 `data/initial-password.txt`。登录后可在设置中修改密码，修改会使已有会话失效并删除初始密码文件。
 
 忘记密码时，在框架根目录执行：
@@ -64,6 +70,7 @@ node plugins/bot-web-panel/scripts/password.mjs
 | `uploadMaxMB` | `20` | 单文件及媒体下载大小上限 |
 | `mediaCacheMB` | `512` | 媒体缓存总量；超出时清理最早缓存 |
 | `sessionHours` | `24` | 管理员会话有效期 |
+| `publicUrl` | `''` | 登录命令的自定义入口，支持完整域名或 `/bot-web/` 地址，也可填写多个 URL 的数组；其他地址仍自动生成 |
 | `allowedOrigins` | `[]` | 反向代理使用的完整外部地址，例如 `https://chat.example.com` |
 | `mediaHosts` | `[]` | 允许访问的本地适配器媒体服务，填写精确 `host:port` |
 
@@ -128,6 +135,8 @@ node plugins/bot-web-panel/tests/composer-panels.mjs
 ```
 
 覆盖多人纵向列表、搜索、键盘选择、面板边界、点击外部关闭、请求取消和跨机器人隔离。`BOT_WEB_URL` 可指定现有框架地址。
+
+登录命令的浏览器回归可运行 `node plugins/bot-web-panel/tests/login-browser.mjs`。它复用运行中框架的静态资源，将全部 API 请求转到临时数据库，验证桌面及手机自动登录、地址栏令牌清理、退出、链接失效和密码登录，不操作真实账号。
 
 真实框架运行期间可以执行只读冒烟检查（仅登录、读取和退出，不发送聊天消息）：
 

@@ -3,6 +3,9 @@ retentionDays: 7
 uploadMaxMB: 20
 mediaCacheMB: 512
 sessionHours: 24
+# Custom origin or full /bot-web/ URL; also accepts a list of URLs.
+# Login messages include these alongside LAN, public IPv4 and IPv6 addresses.
+publicUrl: ''
 # Explicit origins for HTTPS reverse proxies, for example https://chat.example.com.
 allowedOrigins: []
 # Exact hosts of trusted adapter media servers, including port if non-default.
